@@ -34,9 +34,11 @@ def test_get_mine_by_mine_guid(test_client, auth_headers):
 def test_get_filter_by_region(test_client, auth_headers):
     get_resp = test_client.get('/mines?region=' + TEST_REGION_CODE, headers=auth_headers['full_auth_header'])
     get_data = json.loads(get_resp.data.decode())
-    assert get_data
+    assert get_data[mines][region_code]==TEST_REGION_CODE
+    assert get_resp.status_code == 200
 
 #GET Filter by commodity
+
 #GET Filter by tenure
 #GET Filter by status
 #GET Filter by all

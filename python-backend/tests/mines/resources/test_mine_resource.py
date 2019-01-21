@@ -23,6 +23,25 @@ def test_get_mine_by_mine_guid(test_client, auth_headers):
     assert get_data['guid'] == TEST_MINE_GUID
     assert get_resp.status_code == 200
 
+#GET Filter by major mine
+# def test_get_filter_by_major(test_client, auth_headers):
+#     get_resp = test_client.get('/mines?major=true' + TEST_MINE_GUID, headers=auth_headers['full_auth_header'])
+#     get_data = json.loads(get_resp.data.decode())
+
+
+#GET Filter by tsf
+#GET Filter by region
+def test_get_filter_by_region(test_client, auth_headers):
+    get_resp = test_client.get('/mines?region=' + TEST_REGION_CODE, headers=auth_headers['full_auth_header'])
+    get_data = json.loads(get_resp.data.decode())
+    assert get_data[mines][region_code]==TEST_REGION_CODE
+    assert get_resp.status_code == 200
+
+#GET Filter by commodity
+
+#GET Filter by tenure
+#GET Filter by status
+#GET Filter by all
 
 # POST
 def test_post_mine_invalid_url(test_client, auth_headers):

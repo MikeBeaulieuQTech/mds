@@ -34,7 +34,15 @@ def test_get_mine_by_mine_guid(test_client, auth_headers):
 def test_get_filter_by_region(test_client, auth_headers):
     get_resp = test_client.get('/mines?region=' + TEST_REGION_CODE, headers=auth_headers['full_auth_header'])
     get_data = json.loads(get_resp.data.decode())
-    assert get_data[mines][region_code]==TEST_REGION_CODE
+    print(get_data)
+    assert get_data['mines'][0]['region_code']==TEST_REGION_CODE
+    assert get_resp.status_code == 200
+
+def test_get_filter_by_multy_region(test_client, auth_headers):
+    get_resp = test_client.get('/mines?region=' + TEST_FAKE_REGION_CODE + '%2C' + TEST_REGION_CODE, headers=auth_headers['full_auth_header'])
+    get_data = json.loads(get_resp.data.decode())
+    print(get_data)
+    assert get_data['mines'][0]['region_code']==TEST_REGION_CODE
     assert get_resp.status_code == 200
 
 #GET Filter by commodity

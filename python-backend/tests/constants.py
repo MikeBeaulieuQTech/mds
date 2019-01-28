@@ -161,6 +161,7 @@ VIEW_ONLY_AUTH_CLAIMS = {
     "jti": "flask-jwt-oidc-test-support",
     "typ": "Bearer",
     "username": "test-user",
+    "email": "test-email",
     "realm_access": {
         "roles": ["mds-mine-view", "idir"]
     }
@@ -203,6 +204,7 @@ PROPONENT_ONLY_AUTH_CLAIMS = {
     "jti": "flask-jwt-oidc-test-support",
     "typ": "Bearer",
     "username": "test-proponent",
+    "email": "test-proponent-email@minespace.ca",
     "realm_access": {
         "roles": ["minespace-proponent"]
     }

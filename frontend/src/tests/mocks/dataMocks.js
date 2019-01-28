@@ -21,7 +21,7 @@ export const MINE_RESPONSE = {
           tenure_number_id: "1234567",
         },
       ],
-      mine_location: [{ longitude: null, latitude: null }],
+      mine_location: { longitude: null, latitude: null },
       mine_status: {
         statusvalue: ["CLD", "CM"],
         status_labels: ["Closed", "Care & Maintenance"],
@@ -127,12 +127,10 @@ export const MINE_RESPONSE = {
         effective_date: "2018-10-16",
         expiry_date: "9999-12-31",
       },
-      mine_location: [
-        {
-          longitude: null,
-          latitude: null,
-        },
-      ],
+      mine_location: {
+        longitude: null,
+        latitude: null,
+      },
       mine_tailings_storage_facility: [
         {
           mine_guid: "18145c75-49ad-0101-85f3-a43e45ae989a",
@@ -171,7 +169,7 @@ export const MINES = {
           tenure_number_id: "1234567",
         },
       ],
-      mine_location: [{ longitude: null, latitude: null }],
+      mine_location: { longitude: null, latitude: null },
       mine_tailings_storage_facility: [
         {
           mine_guid: "18133c75-49ad-4101-85f3-a43e35ae989a",
@@ -277,12 +275,10 @@ export const MINES = {
         effective_date: "2018-10-16",
         expiry_date: "9999-12-31",
       },
-      mine_location: [
-        {
-          longitude: null,
-          latitude: null,
-        },
-      ],
+      mine_location: {
+        longitude: null,
+        latitude: null,
+      },
       mine_tailings_storage_facility: [
         {
           mine_guid: "18145c75-49ad-0101-85f3-a43e45ae989a",
@@ -344,6 +340,29 @@ export const MINE_NAME_LIST = [
     latitude: "51.4961750",
   },
 ];
+
+export const MINESPACE_USERS = [
+  {
+    user_id: "1",
+    email: "email1@srvr.com",
+    keycloak_guid: "",
+    mines: [""],
+  },
+  {
+    user_id: "2",
+    email: "email2@srvr.com",
+    keycloak_guid: "",
+    mines: [""],
+  },
+  {
+    user_id: "3",
+    email: "email3@srvr.com",
+    keycloak_guid: "",
+    mines: [""],
+  },
+];
+
+export const MINESPACE_RESPONSE = { users: MINESPACE_USERS };
 
 export const PAGE_DATA = {
   current_page: 1,

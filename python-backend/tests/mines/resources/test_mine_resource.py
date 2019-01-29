@@ -1,5 +1,5 @@
 import json
-from tests.constants import (TEST_MINE_NO, TEST_MINE_GUID, TEST_TENURE_ID, TEST_REGION_CODE)
+from tests.constants import (TEST_MINE_NO, TEST_MINE_GUID, TEST_TENURE_ID, TEST_REGION_CODE, TEST_FAKE_REGION_CODE,  TEST_MINE_TENURE_TYPE_CODES)
 
 
 # GET
@@ -28,28 +28,42 @@ def test_get_mine_by_mine_guid(test_client, auth_headers):
 #     get_resp = test_client.get('/mines?major=true' + TEST_MINE_GUID, headers=auth_headers['full_auth_header'])
 #     get_data = json.loads(get_resp.data.decode())
 
+#GET Filter by commodity
 
-#GET Filter by tsf
+#GET Filter by status
+def test_get_filter_by_status(test_client, auth_headers):
+    get_resp = test_client.get('/mines?status=' + , headers=auth_headers['full_auth_header'])
+    get_data = json.loads(get_resp.data.decode())
+    assert get_data['mines'][0]['mine_type'][0]['mine_tenure_type_code']==
+    assert get_resp.status_code == 200
+
+#GET Filter by tenure
+def test_get_filter_by_tsf(test_client, auth_headers):
+    get_resp = test_client.get('/mines?tsf=true', headers=auth_headers['full_auth_header'])
+    get_data = json.loads(get_resp.data.decode())
+    assert len(get_data['mines'][0]['mine_tailings_storage_facility']) >= 1
+    assert get_resp.status_code == 200
+
+
 #GET Filter by region
 def test_get_filter_by_region(test_client, auth_headers):
     get_resp = test_client.get('/mines?region=' + TEST_REGION_CODE, headers=auth_headers['full_auth_header'])
     get_data = json.loads(get_resp.data.decode())
-    print(get_data)
     assert get_data['mines'][0]['region_code']==TEST_REGION_CODE
     assert get_resp.status_code == 200
 
 def test_get_filter_by_multy_region(test_client, auth_headers):
     get_resp = test_client.get('/mines?region=' + TEST_FAKE_REGION_CODE + '%2C' + TEST_REGION_CODE, headers=auth_headers['full_auth_header'])
     get_data = json.loads(get_resp.data.decode())
-    print(get_data)
     assert get_data['mines'][0]['region_code']==TEST_REGION_CODE
     assert get_resp.status_code == 200
 
-#GET Filter by commodity
-
 #GET Filter by tenure
-#GET Filter by status
-#GET Filter by all
+def test_get_filter_by_tenure(test_client, auth_headers):
+    get_resp = test_client.get('/mines?tenure=' + TEST_MINE_TENURE_TYPE_CODES[0], headers=auth_headers['full_auth_header'])
+    get_data = json.loads(get_resp.data.decode())
+    assert get_data['mines'][0]['mine_type'][0]['mine_tenure_type_code']==TEST_MINE_TENURE_TYPE_CODES[0]
+    assert get_resp.status_code == 200
 
 # POST
 def test_post_mine_invalid_url(test_client, auth_headers):

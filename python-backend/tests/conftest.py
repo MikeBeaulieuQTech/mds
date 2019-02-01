@@ -32,7 +32,8 @@ from app.api.mines.tailings.models.tailings import MineTailingsStorageFacility
 from app.api.parties.party_appt.models.mine_party_appt import MinePartyAppointment
 from app.api.parties.party_appt.models.mine_party_appt_type import MinePartyAppointmentType
 
-from app.api.constants import PARTY_STATUS_CODE, MINE_OPERATION_STATUS, MINE_OPERATION_STATUS_REASON, MINE_OPERATION_STATUS_SUB_REASON
+from app.api.constants import PARTY_STATUS_CODE, MINE_OPERATION_STATUS, MINE_OPERATION_STATUS_REASON, \
+    MINE_OPERATION_STATUS_SUB_REASON
 from .constants import *
 from app import auth
 
@@ -139,6 +140,7 @@ def setup_data(session):
         mine_no=TEST_MINE_NO,
         mine_name=TEST_MINE_NAME,
         mine_region=TEST_REGION_CODE,
+        major_mine_ind=TEST_MINE_MAJOR_MINE_IND,
         **DUMMY_USER_KWARGS)
     mine.save()
 
@@ -155,7 +157,8 @@ def setup_data(session):
     mine_type_detail = MineTypeDetail(
         mine_type_detail_xref_guid=uuid.UUID(TEST_MINE_TYPE_DETAIL_GUID),
         mine_type_guid=uuid.UUID(TEST_MINE_TYPE_GUID),
-        mine_disturbance_code=TEST_MINE_DISTURBANCE_CODES[0],
+        # mine_disturbance_code=TEST_MINE_DISTURBANCE_CODES[0],
+        mine_commodity_code = TEST_MINE_COMMODITY_CODES[0],
         active_ind=True,
         **DUMMY_USER_KWARGS)
     mine_type_detail.save()

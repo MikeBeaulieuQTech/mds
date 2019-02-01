@@ -1,5 +1,6 @@
 import json
-from tests.constants import (TEST_MINE_NO, TEST_MINE_GUID, TEST_TENURE_ID, TEST_REGION_CODE, TEST_FAKE_REGION_CODE,  TEST_MINE_TENURE_TYPE_CODES)
+from tests.constants import (TEST_MINE_NO, TEST_MINE_GUID, TEST_TENURE_ID, TEST_REGION_CODE, TEST_FAKE_REGION_CODE, \
+                             TEST_MINE_TENURE_TYPE_CODES, TEST_MINE_MAJOR_MINE_IND, TEST_MINE_COMMODITY_CODES)
 
 
 # GET
@@ -24,18 +25,25 @@ def test_get_mine_by_mine_guid(test_client, auth_headers):
     assert get_resp.status_code == 200
 
 #GET Filter by major mine
-# def test_get_filter_by_major(test_client, auth_headers):
-#     get_resp = test_client.get('/mines?major=true' + TEST_MINE_GUID, headers=auth_headers['full_auth_header'])
-#     get_data = json.loads(get_resp.data.decode())
+def test_get_filter_by_major(test_client, auth_headers):
+    get_resp = test_client.get('/mines?major=' + str(TEST_MINE_MAJOR_MINE_IND).lower(), headers=auth_headers['full_auth_header'])
+    get_data = json.loads(get_resp.data.decode())
+    assert get_data['mines'][0]['major_mine_ind'] == TEST_MINE_MAJOR_MINE_IND
+    assert get_resp.status_code == 200
 
 #GET Filter by commodity
-
-#GET Filter by status
-def test_get_filter_by_status(test_client, auth_headers):
-    get_resp = test_client.get('/mines?status=' + , headers=auth_headers['full_auth_header'])
+def test_get_filter_by_commodity(test_client, auth_headers):
+    get_resp = test_client.get('/mines?commodity=' + str(TEST_MINE_COMMODITY_CODES[0]), headers=auth_headers['full_auth_header'])
     get_data = json.loads(get_resp.data.decode())
-    assert get_data['mines'][0]['mine_type'][0]['mine_tenure_type_code']==
+    print(get_data)
+    assert get_data['mines'][0]['major_mine_ind'] == False
     assert get_resp.status_code == 200
+# #GET Filter by status
+# def test_get_filter_by_status(test_client, auth_headers):
+#     get_resp = test_client.get('/mines?major=' + , headers=auth_headers['full_auth_header'])
+#     get_data = json.loads(get_resp.data.decode())
+#     assert get_data['mines'][0]['mine_type'][0]['mine_tenure_type_code']==
+#     assert get_resp.status_code == 200
 
 #GET Filter by tenure
 def test_get_filter_by_tsf(test_client, auth_headers):
@@ -43,7 +51,6 @@ def test_get_filter_by_tsf(test_client, auth_headers):
     get_data = json.loads(get_resp.data.decode())
     assert len(get_data['mines'][0]['mine_tailings_storage_facility']) >= 1
     assert get_resp.status_code == 200
-
 
 #GET Filter by region
 def test_get_filter_by_region(test_client, auth_headers):

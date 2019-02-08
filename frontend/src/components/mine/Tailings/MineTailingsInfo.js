@@ -1,6 +1,9 @@
 import React, { Component } from "react";
+import { Table } from "antd";
+import NullScreen from "@/components/common/NullScreen";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
+import { objectOf, arrayOf, string } from "prop-types";
 import PropTypes from "prop-types";
 import { Row, Col, Icon, Divider, Popconfirm, Button } from "antd";
 import AuthorizationWrapper from "@/components/common/wrappers/AuthorizationWrapper";
@@ -48,6 +51,7 @@ const propTypes = {
 
 const defaultProps = {
   expectedDocumentStatusOptions: [],
+  //requiredDocuments: [],
 };
 
 const DocumentStatusText = ({ doc, expectedDocumentStatusOptions }) => {
@@ -59,6 +63,49 @@ const DocumentStatusText = ({ doc, expectedDocumentStatusOptions }) => {
     : expectedDocumentStatusOptions.find(({ value }) => value === doc.exp_document_status_guid)
         .label;
 };
+
+
+const columns = [
+  {
+    title: "?",
+    dataIndex: "dateReceived",
+    key: "dateReceived",
+    render: (text, record, index) => {
+      console.log("text", text);
+      console.log("record", record);
+      console.log("index", index);
+      const isOverdue = Date.parse(record.dateReceived) < new Date()
+        && (record.statusId === "None" || (record.statusOptions[0]
+        && record.statusId === record.statusOptions[0].value));
+      return (
+        <div>{isOverdue ? (<img className="padding-small" src={RED_CLOCK} alt="Edit TSF Report" />) : ( "" )}</div>
+      )
+    }
+  },
+  {
+    title: "Name",
+    dataIndex: "name",
+    key: "name"
+  },
+  {
+    title: "Received",
+    dataIndex: "dateReceived",
+    key: "received"
+  }
+];
+
+const transformRowData = (tsfDocuments) =>
+  tsfDocuments.map((doc, id, expectedDocumentStatusOptions) => {
+
+  return {
+    key: doc.exp_document_guid,
+    docId: id,
+    name: doc.exp_document_name,
+    dateReceived: doc.due_date,
+    statusID: doc.exp_document_status_guid,
+    statusOptions: expectedDocumentStatusOptions,
+  }});
+
 /*
   return  */
 export class MineTailingsInfo extends Component {
@@ -124,7 +171,7 @@ export class MineTailingsInfo extends Component {
       props: { onSubmit, title, mineTSFRequiredReportsDropDown },
       content: modalConfig.ADD_TAILINGS_REPORT,
     });
-  }
+  };
 
   openEditReportModal(event, onSubmit, title, statusOptions, doc) {
     this.setState({
@@ -145,109 +192,81 @@ export class MineTailingsInfo extends Component {
         content: modalConfig.EDIT_TAILINGS_REPORT,
       });
     }
-  }
+  };
+
 
   render() {
     return (
       <div>
         {this.props.mine.mine_tailings_storage_facility.map((facility) => (
-          <Row
-            key={facility.mine_tailings_storage_facility_guid}
-            gutter={16}
-            style={{ marginBottom: "10px" }}
-          >
-            <Col span={6}>
-              <h3>{facility.mine_tailings_storage_facility_name}</h3>
-              <p>No TSF registry data available</p>
-            </Col>
-          </Row>
+          <div key={facility.mine_tailings_storage_facility_guid}>
+            <h3>{facility.mine_tailings_storage_facility_name}</h3>
+            <p>No TSF registry data available</p>
+          </div>
         ))}
-        <br />
-        <br />
-        <div>
-          <h3>Reports</h3>
-          <br />
-          <Row gutter={16} justify="center" align="top">
-            <Col span={1} />
-            <Col span={8}>
-              <h5>Name</h5>
-            </Col>
-            <Col span={2}>
-              <h5>Due</h5>
-            </Col>
-            <Col span={2}>
-              <h5>Received</h5>
-            </Col>
-            <Col span={4}>
-              <h5>Status</h5>
-            </Col>
-            <Col span={3}>
-              <h5>Documents</h5>
-            </Col>
-            <Col span={4} />
-          </Row>
-          <Divider type="horizontal" className="thick-divider" />
-          {this.props.mine.mine_expected_documents
-            .sort((doc1, doc2) => {
-              if (!(Date.parse(doc1.due_date) === Date.parse(doc2.due_date)))
-                return Date.parse(doc1.due_date) > Date.parse(doc2.due_date) ? 1 : -1;
-              return doc1.exp_document_name > doc2.exp_document_name ? 1 : -1;
-            })
-            .map((doc, id) => {
-              const isOverdue =
-                Date.parse(doc.due_date) < new Date() &&
-                (doc.exp_document_status_guid === "None" ||
-                  (this.props.expectedDocumentStatusOptions[0] &&
-                    doc.exp_document_status_guid ===
-                      this.props.expectedDocumentStatusOptions[0].value));
-              return (
-                <div key={doc.exp_document_guid}>
-                  <Row gutter={16} justify="center" align="top">
-                    <Col span={1}>
-                      {isOverdue ? (
-                        <img className="padding-small" src={RED_CLOCK} alt="Edit TSF Report" />
-                      ) : (
-                        ""
-                      )}
-                    </Col>
-                    <Col id={`name-${id}`} span={8}>
+
+        <Table
+          pagination={false}
+          columns={columns}
+          dataSource={transformRowData(this.props.mine.mine_expected_documents)}
+          locale={{ emptyText: <NullScreen type="no-results" /> }}
+        />
+
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Due</th>
+              <th>Received</th>
+              <th>Status</th>
+              <th>Documents</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {this.props.mine.mine_expected_documents
+              .sort((doc1, doc2) => {
+                if (!(Date.parse(doc1.due_date) === Date.parse(doc2.due_date)))
+                  return Date.parse(doc1.due_date) > Date.parse(doc2.due_date) ? 1 : -1;
+                return doc1.exp_document_name > doc2.exp_document_name ? 1 : -1;
+              })
+              .map((doc, id) => {
+                const isOverdue =
+                  Date.parse(doc.due_date) < new Date() &&
+                  (doc.exp_document_status_guid === "None" ||
+                    (this.props.expectedDocumentStatusOptions[0] &&
+                      doc.exp_document_status_guid ===
+                        this.props.expectedDocumentStatusOptions[0].value));
+                return (
+                  <tr key={doc.exp_document_guid}>
+                    <td>
+                      {isOverdue ? (<img className="padding-small" src={RED_CLOCK} alt="Edit TSF Report" />) : ( "" )}
+                    </td>
+                    <td id={`name-${id}`}>
                       <h6>{doc.exp_document_name}</h6>
-                    </Col>
-                    <Col id={`due-date-${id}`} span={2}>
+                    </td>
+                    <td id={`due-date-${id}`}>
                       <h6>{doc.due_date === "None" ? "-" : doc.due_date}</h6>
-                    </Col>
-                    <Col span={2}>
+                    </td>
+                    <td>
                       <h6>{doc.received_date === "None" ? "-" : doc.received_date}</h6>
-                    </Col>
-                    <Col id={`status-${id}`} span={4}>
-                      <h6 className={isOverdue ? "bold" : null}>
-                        <DocumentStatusText
-                          doc={doc}
-                          expectedDocumentStatusOptions={this.props.expectedDocumentStatusOptions}
-                        />
-                      </h6>
-                    </Col>
-                    <Col span={3}>
-                      {!doc.related_documents
-                        ? "-"
-                        : doc.related_documents.map((file, id) => (
-                            <div>
-                              <a
-                                key={id}
-                                onClick={() =>
-                                  this.getFileFromDocumentManager(file.document_manager_guid)
-                                }
-                              >
-                                {file.document_name}
-                              </a>
-                            </div>
-                          ))}
-                    </Col>
-                    <Col span={4} align="right">
-                      <AuthorizationWrapper
-                        permission={Permission.CREATE}
-                        isMajorMine={this.props.mine.major_mine_ind}
-                      >
+                    </td>
+                    <td id={`status-${id}`}>
+                      <span className={isOverdue ? "bold" : null}>
+                        <DocumentStatusText doc={doc} expectedDocumentStatusOptions={this.props.expectedDocumentStatusOptions}/>
+                      </span>
+                    </td>
+                    <td>
+                      {!doc.related_documents ? "-" : doc.related_documents.map((file, id) => (
+                        <div>
+                          <a key={id} onClick={() => this.getFileFromDocumentManager(file.document_manager_guid)}>
+                            {file.document_name}
+                          </a>
+                        </div>
+                      ))}
+                    </td>
+                    <td>
+                      <AuthorizationWrapper permission={Permission.CREATE} isMajorMine={this.props.mine.major_mine_ind}>
                         <div className="inline-flex">
                           <Button
                             className="full-mobile"
@@ -261,8 +280,7 @@ export class MineTailingsInfo extends Component {
                                 this.props.expectedDocumentStatusOptions,
                                 doc
                               )
-                            }
-                          >
+                            }>
                             <img src={BRAND_PENCIL} alt="Edit TSF Report" />
                           </Button>
                           <Popconfirm
@@ -270,47 +288,35 @@ export class MineTailingsInfo extends Component {
                             title={`Are you sure you want to delete ${doc.exp_document_name}?`}
                             onConfirm={(event) => this.removeReport(event, doc.exp_document_guid)}
                             okText="Delete"
-                            cancelText="Cancel"
-                          >
+                            cancelText="Cancel">
                             <Button className="full-mobile" ghost type="primary">
                               <Icon type="minus-circle" theme="outlined" />
                             </Button>
                           </Popconfirm>
                         </div>
                       </AuthorizationWrapper>
-                    </Col>
-                  </Row>
-                  <Divider type="horizontal" />
-                </div>
-              );
-            })}
-          <div key="0">
-            <Row gutter={16} justify="center" align="top">
-              <Col span={8} align="left">
-                <AuthorizationWrapper
-                  permission={Permission.CREATE}
-                  isMajorMine={this.props.mine.major_mine_ind}
-                >
-                  <Button
-                    type="secondary"
-                    ghost
-                    onClick={(event) =>
-                      this.openAddReportModal(
-                        event,
-                        this.handleAddReportSubmit,
-                        ModalContent.ADD_TAILINGS_REPORT,
-                        this.props.mineTSFRequiredReports
-                      )
-                    }
-                  >
-                    {`+ ${ModalContent.ADD_TAILINGS_REPORT}`}
-                  </Button>
-                </AuthorizationWrapper>
-              </Col>
-              <Col span={12} />
-              <Col span={4} align="right" />
-            </Row>
-          </div>
+                    </td>
+                  </tr>
+                );
+              })}
+          </tbody>
+        </table>
+        <div key="0">
+          <AuthorizationWrapper
+            permission={Permission.CREATE}
+            isMajorMine={this.props.mine.major_mine_ind}>
+            <Button type="secondary" ghost
+              onClick={(event) =>
+                this.openAddReportModal(
+                  event,
+                  this.handleAddReportSubmit,
+                  ModalContent.ADD_TAILINGS_REPORT,
+                  this.props.mineTSFRequiredReports
+                )
+              }>
+              {`+ ${ModalContent.ADD_TAILINGS_REPORT}`}
+            </Button>
+          </AuthorizationWrapper>
         </div>
       </div>
     );

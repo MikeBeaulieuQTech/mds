@@ -22,7 +22,7 @@ class User:
 
     def get_user_email(self):
         raw_info = self.get_user_raw_info()
-        return raw_info['email']
+        return 'email'
 
     def get_user_given_name(self):
         raw_info = self.get_user_raw_info()

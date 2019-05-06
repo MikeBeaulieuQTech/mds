@@ -40,7 +40,8 @@
     "redux-mock-store": "^1.5.3",
     "redux-thunk": "^2.2.0",
     "reselect": "^4.0.0",
-    "tus-js-client": "^1.6.0"
+    "tus-js-client": "^1.6.0",
+    "snyk": "^1.161.1"
   },
   "devDependencies": {
     "antd-scss-theme-plugin": "^1.0.6",
@@ -112,7 +113,9 @@
     "format:write-all": "prettier --config .prettierrc.json src/*.js --write && prettier --config .prettierrc.json src/**/*.js --write && prettier --config .prettierrc.json src/**/**/*.js --write",
     "test": "jest --env=jsdom -u --runInBand",
     "test:watch": "jest --env=jsdom --watch -u --runInBand",
-    "test:coverage": "jest --env=jsdom --coverage src --testResultsProcessor=jest-junit -u --runInBand"
+    "test:coverage": "jest --env=jsdom --coverage src --testResultsProcessor=jest-junit -u --runInBand",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "jest": {
     "verbose": true,
@@ -147,5 +150,6 @@
   },
   "browserslist": [
     "> 0.1%"
-  ]
+  ],
+  "snyk": true
 }

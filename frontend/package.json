@@ -6,7 +6,7 @@
   "homepage": "${BASE_PATH}/",
   "dependencies": {
     "antd": "^3.7.0",
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "axios-mock-adapter": "^1.15.0",
     "babel-polyfill": "^6.26.0",
     "dotenv": "^6.0.0",

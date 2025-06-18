@@ -8,7 +8,7 @@ elastic-apm[flask]==4.0.3
 Flask==1.0.2
 Flask-APScheduler==1.11.0
 Flask-Caching==1.4.0
-Flask-Cors==3.0.6
+Flask-Cors==6.0.0
 flask-compress==1.4.0
 Flask-Migrate==2.2.1
 flask-restplus==0.11.0

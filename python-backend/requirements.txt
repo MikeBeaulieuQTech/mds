@@ -39,4 +39,5 @@ SQLAlchemy==1.2.10
 sqlalchemy-filters==0.8.0
 uwsgi==2.0.17.1
 uwsgitop==0.10
-Werkzeug==0.14.1
+Werkzeug==3.1.5
+urllib3>=2.6.3 # not directly required, pinned by Snyk to avoid a vulnerability
